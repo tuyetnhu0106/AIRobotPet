@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robot Thú Cưng AI - Ứng dụng Giám sát</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .app-container {
+            max-width: 414px;
+            margin: 0 auto;
+            background-color: white;
+            height: 100vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .header {
+            background-color: #4285F4;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header h1 {
+            font-size: 18px;
+            font-weight: 500;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #4CAF50;
+            margin-right: 5px;
+        }
+        
+        .live-feed {
+            width: 100%;
+            position: relative;
+        }
+        
+        .video-container {
+            width: 100%;
+            height: 230px;
+            background-color: #000;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .video-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            background-color: #444;
+        }
+        
+        .video-controls {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            display: flex;
+        }
+        
+        .control-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        
+        .emergency-alert {
+            background-color: #FF5252;
+            color: white;
+            padding: 15px;
+            margin: 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .alert-icon {
+            font-size: 24px;
+            margin-right: 15px;
+        }
+        
+        .dashboard {
+            padding: 15px;
+        }
+        
+        .section {
+            margin-bottom: 20px;
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .see-all {
+            color: #4285F4;
+            font-size: 14px;
+        }
+        
+        .stat-cards {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        
+        .stat-card {
+            flex: 1;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .medicine-reminder {
+            border-left: 4px solid #4CAF50;
+            padding-left: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .medicine-time {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .medicine-name {
+            font-size: 16px;
+            margin: 5px 0;
+        }
+        
+        .medicine-instruction {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #E3F2FD;
+            color: #4285F4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 15px;
+        }
+        
+        .activity-details {
+            flex: 1;
+        }
+        
+        .activity-title {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .activity-time {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .navigation {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            max-width: 414px;
+            background-color: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid #eee;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .nav-item.active {
+            color: #4285F4;
+        }
+        
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        /* Biểu tượng cho trạng thái */
+        .status-cards {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .status-card {
+            flex: 1;
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .status-card.normal {
+            background-color: #E8F5E9;
+        }
+        
+        .status-card.warning {
+            background-color: #FFF3E0;
+        }
+        
+        .status-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 10px;
+        }
+        
+        .status-card.normal .status-icon {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        .status-card.warning .status-icon {
+            background-color: #FF9800;
+            color: white;
+        }
+        
+        .status-info {
+            font-size: 12px;
+        }
+        
+        .status-info p:first-child {
+            font-weight: 500;
+            margin-bottom: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <h1>Robot Thú Cưng AI</h1>
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span>Trực tuyến</span>
+            </div>
+        </div>
+        
+        <div class="live-feed">
+            <div class="video-container">
+                <div class="video-placeholder">
+                    <div style="font-size: 36px; margin-bottom: 10px;">📹</div>
+                    <div>Camera theo dõi trực tiếp</div>
+                </div>
+                <div class="video-controls">
+                    <div class="control-btn">🔊</div>
+                    <div class="control-btn">📞</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="dashboard">
+            <div class="emergency-alert">
+                <div class="alert-icon">⚠️</div>
+                <div>
+                    <strong>Cảnh báo!</strong> Phát hiện sự cố ngã vào lúc 14:25. Đã gửi thông báo.
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Trạng thái hiện tại</h2>
+                </div>
+                <div class="status-cards">
+                    <div class="status-card normal">
+                        <div class="status-icon">❤️</div>
+                        <div class="status-info">
+                            <p>Nhịp tim</p>
+                            <p>78 BPM</p>
+                        </div>
+                    </div>
+                    <div class="status-card warning">
+                        <div class="status-icon">🔄</div>
+                        <div class="status-info">
+                            <p>Hoạt động</p>
+                            <p>Thấp hơn BT</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-cards">
+                    <div class="stat-card">
+                        <div class="stat-value">4/6</div>
+                        <div class="stat-label">Thuốc đã uống</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">2</div>
+                        <div class="stat-label">Cuộc hội thoại</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">30p</div>
+                        <div class="stat-label">Thời gian nghỉ</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Lịch uống thuốc hôm nay</h2>
+                    <span class="see-all">Xem tất cả</span>
+                </div>
+                <div class="medicine-reminder">
+                    <div class="medicine-time">07:00 - Đã hoàn thành</div>
+                    <div class="medicine-name">Thuốc huyết áp</div>
+                    <div class="medicine-instruction">Uống sau khi ăn sáng</div>
+                </div>
+                <div class="medicine-reminder">
+                    <div class="medicine-time">12:30 - Đã hoàn thành</div>
+                    <div class="medicine-name">Vitamin tổng hợp</div>
+                    <div class="medicine-instruction">Uống trong bữa trưa</div>
+                </div>
+                <div class="medicine-reminder">
+                    <div class="medicine-time">18:00 - Sắp đến</div>
+                    <div class="medicine-name">Thuốc tiểu đường</div>
+                    <div class="medicine-instruction">Uống trước khi ăn tối</div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Hoạt động gần đây</h2>
+                    <span class="see-all">Xem tất cả</span>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon">🚶</div>
+                    <div class="activity-details">
+                        <div class="activity-title">Đi dạo trong phòng khách</div>
+                        <div class="activity-time">15:43 - 10 phút trước</div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon">📺</div>
+                    <div class="activity-details">
+                        <div class="activity-title">Xem TV trong phòng khách</div>
+                        <div class="activity-time">14:30 - 1 giờ trước</div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon">💬</div>
+                    <div class="activity-details">
+                        <div class="activity-title">Trò chuyện với Robot</div>
+                        <div class="activity-time">13:15 - 2 giờ trước</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="navigation">
+            <div class="nav-item active">
+                <div class="nav-icon">🏠</div>
+                <span>Trang chủ</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">📹</div>
+                <span>Camera</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">💊</div>
+                <span>Thuốc</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">📊</div>
+                <span>Báo cáo</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">⚙️</div>
+                <span>Cài đặt</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
