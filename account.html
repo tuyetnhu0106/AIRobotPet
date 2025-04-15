@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cá nhân - Robot AI Thú Cưng</title>
+    <style>
+        /* Import Google Fonts */
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
+        
+        /* Reset CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            position: relative;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        /* Header */
+        .profile-header {
+            background: linear-gradient(135deg, #6e8efb, #4a6cf7);
+            color: white;
+            padding: 25px 20px;
+            position: relative;
+            text-align: center;
+        }
+        
+        .settings-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            opacity: 0.9;
+        }
+        
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid rgba(255,255,255,0.5);
+            overflow: hidden;
+        }
+        
+        .profile-avatar img {
+            width: 94px;
+            height: 94px;
+            object-fit: cover;
+        }
+        
+        .profile-name {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .profile-role {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+        
+        .profile-stats {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 10px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-count {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        /* Profile Content */
+        .profile-content {
+            padding: 20px;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            color: #4a6cf7;
+            margin-right: 8px;
+        }
+        
+        /* Elderly Info Section */
+        .elderly-info {
+            background-color: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+        
+        .info-row {
+            display: flex;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            font-size: 14px;
+            color: #666;
+            width: 130px;
+        }
+        
+        .info-value {
+            font-size: 14px;
+            font-weight: 500;
+            flex: 1;
+        }
+        
+        /* Menu Section */
+        .menu-list {
+            margin-bottom: 25px;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background-color: white;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .menu-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            background-color: #f0f4ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: #4a6cf7;
+        }
+        
+        .menu-content {
+            flex: 1;
+        }
+        
+        .menu-title {
+            font-size: 15px;
+            font-weight: 500;
+        }
+        
+        .menu-description {
+            font-size: 12px;
+            color: #666;
+            margin-top: 3px;
+        }
+        
+        .menu-arrow {
+            color: #999;
+            font-size: 16px;
+        }
+        
+        /* Emergency Contacts */
+        .contacts-list {
+            margin-bottom: 25px;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background-color: white;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .contact-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+            background-color: #f0f4ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            overflow: hidden;
+        }
+        
+        .contact-avatar img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+        }
+        
+        .contact-info {
+            flex: 1;
+        }
+        
+        .contact-name {
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 3px;
+        }
+        
+        .contact-relation {
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .contact-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .contact-action {
+            width: 36px;
+            height: 36px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            background-color: #4a6cf7;
+        }
+        
+        .contact-action.call {
+            background-color: #34C759;
+        }
+        
+        .contact-action.message {
+            background-color: #4a6cf7;
+        }
+        
+        /* Version Info */
+        .version-info {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: #999;
+            font-size: 12px;
+        }
+        
+        /* Logout Button */
+        .logout-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            background: none;
+            border-radius: 8px;
+            color: #FF3B30;
+            font-size: 16px;
+            font-weight: 500;
+            margin-top: 20px;
+            cursor: pointer;
+            text-align: center;
+        }
+        
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            box-shadow: 0 -3px 10px rgba(0,0,0,0.05);
+            max-width: 480px;
+            margin: 0 auto;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #999;
+            text-decoration: none;
+            font-size: 10px;
+        }
+        
+        .nav-item.active {
+            color: #4a6cf7;
+        }
+        
+        .nav-item .icon {
+            margin-bottom: 5px;
+            font-size: 18px;
+        }
+        
+        /* Extra space for bottom nav */
+        .bottom-spacer {
+            height: 70px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <button class="settings-btn">
+                <i class="fas fa-cog"></i>
+            </button>
+            
+            <div class="profile-avatar">
+                <img src="./img1.JPG" alt="Profile Avatar">
+            </div>
+        </div>
+        
+        <!-- Profile Content -->
+        <div class="profile-content">
+            <!-- Elderly Information -->
+            <div class="section-title">
+                <i class="fas fa-user"></i> Thông tin người cao tuổi
+            </div>
+            
+            <div class="elderly-info">
+                <div class="info-row">
+                    <div class="info-label">Họ và tên</div>
+                    <div class="info-value">Nguyễn Văn A</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Ngày sinh</div>
+                    <div class="info-value">01/05/1945</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Nhóm máu</div>
+                    <div class="info-value">A+</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Bệnh nền</div>
+                    <div class="info-value">Tăng huyết áp, Tiểu đường</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Dị ứng</div>
+                    <div class="info-value">Hải sản</div>
+                </div>
+            </div>
+            
+            <!-- Menu Options -->
+            <div class="section-title">
+                <i class="fas fa-sliders-h"></i> Tùy chọn
+            </div>
+            
+            <div class="menu-list">
+                <div class="menu-item">
+                    <div class="menu-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="menu-content">
+                        <div class="menu-title">Cài đặt Robot</div>
+                        <div class="menu-description">Cập nhật, bảo trì và kết nối</div>
+                    </div>
+                    <div class="menu-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+                
+                <div class="menu-item">
+                    <div class="menu-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <div class="menu-content">
+                        <div class="menu-title">Cài đặt thông báo</div>
+                        <div class="menu-description">Tùy chỉnh loại và thời gian thông báo</div>
+                    </div>
+                    <div class="menu-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+                
+                <div class="menu-item">
+                    <div class="menu-icon">
+                        <i class="fas fa-pills"></i>
+                    </div>
+                    <div class="menu-content">
+                        <div class="menu-title">Quản lý thuốc</div>
+                        <div class="menu-description">Danh sách và lịch uống thuốc</div>
+                    </div>
+                    <div class="menu-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+                
+                <div class="menu-item">
+                    <div class="menu-icon">
+                        <i class="fas fa-file-medical"></i>
+                    </div>
+                    <div class="menu-content">
+                        <div class="menu-title">Hồ sơ y tế</div>
+                        <div class="menu-description">Thông tin sức khỏe và bệnh án</div>
+                    </div>
+                    <div class="menu-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Emergency Contacts -->
+            <div class="section-title">
+                <i class="fas fa-phone-alt"></i> Liên hệ khẩn cấp
+            </div>
+            
+            <div class="contacts-list">
+                <div class="contact-item">
+                    <div class="contact-avatar">
+                        <img src="./img2.png" alt="Contact Avatar">
+                    </div>
+                    <div class="contact-info">
+                        <div class="contact-name">Nguyễn Văn C</div>
+                        <div class="contact-relation">Con trai</div>
+                    </div>
+                    <div class="contact-actions">
+                        <button class="contact-action call">
+                            <i class="fas fa-phone"></i>
+                        </button>
+                        <button class="contact-action message">
+                            <i class="fas fa-comment"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-avatar">
+                        <img src="./img2.png" alt="Contact Avatar">
+                    </div>
+                    <div class="contact-info">
+                        <div class="contact-name">Bs. Trần Văn D</div>
+                        <div class="contact-relation">Bác sĩ gia đình</div>
+                    </div>
+                    <div class="contact-actions">
+                        <button class="contact-action call">
+                            <i class="fas fa-phone"></i>
+                        </button>
+                        <button class="contact-action message">
+                            <i class="fas fa-comment"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Logout Button -->
+            <button class="logout-btn">Đăng xuất</button>
+            
+            <!-- Version Info -->
+            <div class="version-info">
+                Phiên bản 1.0.5 | © 2025 Robot AI Thú Cưng
+            </div>
+            
+            <!-- Spacer for bottom nav -->
+            <div class="bottom-spacer"></div>
+        </div>
+        
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <a href="./index.html" class="nav-item">
+                <div class="icon">🏠</div>
+                <span>Trang chủ</span>
+            </a>
+            <a href="./health.html" class="nav-item">
+                <div class="icon">📊</div>
+                <span>Sức khỏe</span>
+            </a>
+            <a href="./settings.html" class="nav-item">
+                <div class="icon">🔊</div>
+                <span>Trò chuyện</span>
+            </a>
+            <a href="./account.html" class="nav-item active">
+                <div class="icon">👤</div>
+                <span>Cá nhân</span>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

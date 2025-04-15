@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theo dõi sức khỏe - Robot AI Thú Cưng</title>
+    <style>
+        /* Import Google Fonts */
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
+        
+        /* Reset CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            position: relative;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #6e8efb, #4a6cf7);
+            color: white;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        
+        .back-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            margin-right: 15px;
+            cursor: pointer;
+        }
+        
+        .header h1 {
+            font-size: 18px;
+        }
+        
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            background-color: white;
+            padding: 0 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            padding: 15px 5px;
+            text-align: center;
+            background: none;
+            border: none;
+            font-size: 14px;
+            color: #666;
+            position: relative;
+            font-weight: 500;
+        }
+        
+        .tab-btn.active {
+            color: #4a6cf7;
+        }
+        
+        .tab-btn.active:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 25%;
+            width: 50%;
+            height: 3px;
+            background-color: #4a6cf7;
+            border-radius: 3px 3px 0 0;
+        }
+        
+        /* Dashboard Section */
+        .dashboard {
+            padding: 20px;
+        }
+        
+        .health-status {
+            background: linear-gradient(135deg, #6e8efb, #4a6cf7);
+            border-radius: 15px;
+            padding: 20px;
+            color: white;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .status-title {
+            font-size: 18px;
+            font-weight: 500;
+        }
+        
+        .status-date {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .status-summary {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .status-icon {
+            width: 50px;
+            height: 50px;
+            background-color: rgba(255,255,255,0.2);
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .status-text {
+            font-size: 16px;
+            flex: 1;
+        }
+        
+        .status-text strong {
+            display: block;
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .status-bg {
+            position: absolute;
+            bottom: -15px;
+            right: -15px;
+            width: 120px;
+            height: 120px;
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 60px;
+            z-index: 0;
+        }
+        
+        /* Health Metrics */
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .view-all {
+            font-size: 14px;
+            color: #4a6cf7;
+            text-decoration: none;
+            font-weight: normal;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .metric-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .metric-name {
+            font-size: 14px;
+            color: #666;
+            display: flex;
+            align-items: center;
+        }
+        
+        .metric-name i {
+            margin-right: 5px;
+            color: #4a6cf7;
+        }
+        
+        .metric-trend {
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .trend-up {
+            color: #FF3B30;
+        }
+        
+        .trend-down {
+            color: #34C759;
+        }
+        
+        .trend-stable {
+            color: #FF9500;
+        }
+        
+        .metric-value {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .metric-unit {
+            font-size: 12px;
+            color: #888;
+        }
+        
+        /* Activity History */
+        .activity-list {
+            margin-bottom: 25px;
+        }
+        
+        .activity-item {
+            display: flex;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            background-color: #f0f4ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: #4a6cf7;
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-title {
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .activity-details {
+            font-size: 13px;
+            color: #666;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .activity-time {
+            color: #888;
+        }
+        
+        /* Sleep Pattern Chart */
+        .chart-container {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .chart-title {
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        .chart-legend {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .legend-color {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            margin-right: 5px;
+        }
+        
+        .deep-sleep {
+            background-color: #4a6cf7;
+        }
+        
+        .light-sleep {
+            background-color: #a8c7ff;
+        }
+        
+        .sleep-chart {
+            height: 180px;
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            padding-top: 20px;
+            position: relative;
+        }
+        
+        .sleep-day {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .sleep-bar {
+            width: 100%;
+            background-color: #a8c7ff;
+            border-radius: 4px 4px 0 0;
+            position: relative;
+        }
+        
+        .deep-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #4a6cf7;
+            border-radius: 0 0 4px 4px;
+        }
+        
+        .sleep-weekday {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #888;
+        }
+        
+        .chart-baseline {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background-color: #eee;
+        }
+        
+        .baseline-8hr {
+            bottom: 96px;
+        }
+        
+        .baseline-4hr {
+            bottom: 48px;
+        }
+        
+        .baseline-label {
+            position: absolute;
+            left: -5px;
+            font-size: 10px;
+            color: #aaa;
+        }
+        
+        .label-8hr {
+            bottom: 96px;
+        }
+        
+        .label-4hr {
+            bottom: 48px;
+        }
+        
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            box-shadow: 0 -3px 10px rgba(0,0,0,0.05);
+            max-width: 480px;
+            margin: 0 auto;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #999;
+            text-decoration: none;
+            font-size: 10px;
+        }
+        
+        .nav-item.active {
+            color: #4a6cf7;
+        }
+        
+        .nav-item .icon {
+            margin-bottom: 5px;
+            font-size: 18px;
+        }
+        
+        /* Extra space for bottom nav */
+        .bottom-spacer {
+            height: 70px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <h1>Theo dõi sức khỏe</h1>
+        </div>
+        
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+            <button class="tab-btn active">Tổng quan</button>
+            <button class="tab-btn">Hoạt động</button>
+            <button class="tab-btn">Giấc ngủ</button>
+            <button class="tab-btn">Báo cáo</button>
+        </div>
+        
+        <!-- Dashboard Content -->
+        <div class="dashboard">
+            <!-- Health Status Summary -->
+            <div class="health-status">
+                <div class="status-header">
+                    <div class="status-title">Tình trạng sức khỏe</div>
+                    <div class="status-date">Hôm nay, 16/04</div>
+                </div>
+                
+                <div class="status-summary">
+                    <div class="status-icon">❤️</div>
+                    <div class="status-text">
+                        <strong>Ổn định</strong>
+                        Không phát hiện điều bất thường
+                    </div>
+                </div>
+                
+                <div class="status-bg"></div>
+            </div>
+            
+            <!-- Vital Metrics -->
+            <div class="section-title">
+                Các chỉ số quan trọng
+                <a href="#" class="view-all">Xem chi tiết</a>
+            </div>
+            
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-name">
+                            <i class="fas fa-heartbeat"></i> Mạch
+                        </div>
+                        <div class="metric-trend trend-stable">
+                            <i class="fas fa-minus"></i>
+                        </div>
+                    </div>
+                    <div class="metric-value">72</div>
+                    <div class="metric-unit">nhịp/phút</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-name">
+                            <i class="fas fa-stethoscope"></i> Huyết áp
+                        </div>
+                        <div class="metric-trend trend-down">
+                            <i class="fas fa-arrow-down"></i>
+                        </div>
+                    </div>
+                    <div class="metric-value">130/85</div>
+                    <div class="metric-unit">mmHg</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-name">
+                            <i class="fas fa-temperature-high"></i> Nhiệt độ
+                        </div>
+                        <div class="metric-trend trend-stable">
+                            <i class="fas fa-minus"></i>
+                        </div>
+                    </div>
+                    <div class="metric-value">36.7</div>
+                    <div class="metric-unit">°C</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-name">
+                            <i class="fas fa-walking"></i> Bước chân
+                        </div>
+                        <div class="metric-trend trend-up">
+                            <i class="fas fa-arrow-up"></i>
+                        </div>
+                    </div>
+                    <div class="metric-value">1,250</div>
+                    <div class="metric-unit">bước/ngày</div>
+                </div>
+            </div>
+            
+            <!-- Recent Activity -->
+            <div class="section-title">
+                Hoạt động gần đây
+                <a href="#" class="view-all">Xem tất cả</a>
+            </div>
+            
+            <div class="activity-list">
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Dùng bữa sáng</div>
+                        <div class="activity-details">
+                            <div>Ăn đầy đủ, ngon miệng</div>
+                            <div class="activity-time">7:15</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="fas fa-pills"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Uống thuốc huyết áp</div>
+                        <div class="activity-details">
+                            <div>Đã xác nhận uống đúng giờ</div>
+                            <div class="activity-time">8:00</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="fas fa-walking"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Đi dạo trong nhà</div>
+                        <div class="activity-details">
+                            <div>Khoảng 15 phút</div>
+                            <div class="activity-time">9:30</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sleep Pattern Chart -->
+            <div class="section-title">
+                Mô hình giấc ngủ
+            </div>
+            
+            <div class="chart-container">
+                <div class="chart-header">
+                    <div class="chart-title">7 ngày qua</div>
+                    <div class="chart-legend">
+                        <div class="legend-item">
+                            <div class="legend-color deep-sleep"></div>
+                            <span>Giấc sâu</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color light-sleep"></div>
+                            <span>Giấc nông</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sleep-chart">
+                    <div class="chart-baseline baseline-8hr"></div>
+                    <div class="chart-baseline baseline-4hr"></div>
+                    <div class="baseline-label label-8hr">8h</div>
+                    <div class="baseline-label label-4hr">4h</div>
+                    
+                    <div class="sleep-day">
+                        <div class="sleep-bar" style="height: 100px;">
+                            <div class="deep-bar" style="height: 35px;"></div>
+                        </div>
+                        <div class="sleep-weekday">T2</div>
+                    </div>
+                    
+                    <div class="sleep-day">
+                        <div class="sleep-bar" style="height: 110px;">
+                            <div class="deep-bar" style="height: 40px;"></div>
+                        </div>
+                        <div class="sleep-weekday">T3</div>
+                    </div>
+                    
+                    <div class="sleep-day">
+                        <div class="sleep-bar" style="height: 90px;">
+                            <div class="deep-bar" style="height: 30px;"></div>
+                        </div>
+                        <div class="sleep-weekday">T4</div>
+                    </div>
+                    
+                    <div class="sleep-day">
+                        <div class="sleep-bar" style="height: 105px;">
+                            <div class="deep-bar" style="height: 45px;"></div>
+                        </div>
+                        <div class="sleep-weekday">T5</div>
+                    </div>
+                    
+                    <div class="sleep-day">
+                        <div class="sleep-bar" style="height: 95px;">
+                            <div class="deep-bar" style="height: 35px;"></div>
+                        </div>
+                        <div class="sleep-weekday">T6</div>
+                    </div>
+                    
+                    <div class="sleep-day">
+                        <div class="sleep-bar" style="height: 120px;">
+                            <div class="deep-bar" style="height: 50px;"></div>
+                        </div>
+                        <div class="sleep-weekday">T7</div>
+                    </div>
+                    
+                    <div class="sleep-day">
+                        <div class="sleep-bar" style="height: 115px;">
+                            <div class="deep-bar" style="height: 45px;"></div>
+                        </div>
+                        <div class="sleep-weekday">CN</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Spacer for bottom nav -->
+            <div class="bottom-spacer"></div>
+        </div>
+        
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <a href="./index.html" class="nav-item">
+                <div class="icon">🏠</div>
+                <span>Trang chủ</span>
+            </a>
+            <a href="./health.html" class="nav-item active">
+                <div class="icon">📊</div>
+                <span>Sức khỏe</span>
+            </a>
+            <a href="./settings.html" class="nav-item">
+                <div class="icon">🔊</div>
+                <span>Trò chuyện</span>
+            </a>
+            <a href="./account.html" class="nav-item">
+                <div class="icon">👤</div>
+                <span>Cá nhân</span>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
